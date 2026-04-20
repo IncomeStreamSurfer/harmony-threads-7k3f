@@ -1,0 +1,62 @@
+---
+import Base from '../layouts/Base.astro';
+
+const faqs = [
+  { q: 'When will my order ship?', a: 'Orders placed before 2pm GMT on a working day ship the same day from our Birmingham studio.' },
+  { q: 'Can I change or cancel my order?', a: 'Email hello@mystore.example within 30 minutes of checkout and we will do everything we can.' },
+  { q: 'Do you offer gift wrapping?', a: 'Yes — every item in the Gifts collection ships wrapped in recycled brown paper with a hand-written note.' },
+  { q: 'How much does shipping cost?', a: 'UK: £3.95 tracked 48h, or £5.95 tracked 24h. Free tracked 24h on orders over £40. EU: £9.95. Rest of world: £14.95.' },
+  { q: 'Do you ship internationally?', a: 'Yes, we ship to 24 countries. EU orders are DDP (duties pre-paid).' },
+  { q: 'What is your returns policy?', a: '30 days, no questions asked. UK returns are free with a pre-paid Royal Mail label.' },
+  { q: 'How long do refunds take?', a: 'We process returns within 2 working days of receiving them. Your bank typically takes 3-5 working days to show the credit.' },
+  { q: 'Can I exchange instead of refund?', a: 'Yes — pop a note in with the return saying what size or colour you would like instead.' },
+  { q: 'Do your t-shirts run big or small?', a: 'Our graphic tees are a modern unisex fit. If between sizes, size down for a closer fit. cm measurements are on every product page.' },
+  { q: 'Are your products pre-shrunk?', a: 'Yes. All our cotton is pre-washed at the factory.' },
+  { q: 'Where are your products made?', a: 'T-shirts screen-printed in Birmingham UK. Hoodies made in Portugal. Totes printed in the UK.' },
+  { q: 'What payment methods do you accept?', a: 'All major cards, Apple Pay, Google Pay and Link, via Stripe.' },
+  { q: 'Is checkout secure?', a: 'Yes. TLS 1.3 + Stripe 3DS. We never store card numbers.' },
+];
+
+const siteUrl = (Astro.site?.toString() || '').replace(/\/$/, '');
+const faqLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((i) => ({ '@type': 'Question', name: i.q, acceptedAnswer: { '@type': 'Answer', text: i.a } })),
+};
+const breadcrumbLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: siteUrl },
+    { '@type': 'ListItem', position: 2, name: 'FAQ', item: `${siteUrl}/faq` },
+  ],
+};
+---
+<Base
+  title="FAQ | MyStore"
+  description="Got questions? Find quick answers in MyStore's FAQ — covering orders, shipping, returns, payments, and more."
+  structuredData={[faqLd, breadcrumbLd]}
+>
+  <section class="border-b border-[var(--color-line)] bg-white">
+    <div class="max-w-5xl mx-auto px-6 lg:px-10 py-16 lg:py-20">
+      <h1 class="font-display text-5xl sm:text-6xl tracking-tight">Frequently asked questions</h1>
+      <p class="mt-5 max-w-2xl text-[var(--color-mute)] leading-relaxed">
+        Everything we get asked most often. If you can't find the answer here, check our <a href="/shipping-returns" class="link-underline text-[var(--color-ink)]">shipping &amp; returns</a> page or <a href="/contact" class="link-underline text-[var(--color-ink)]">email us</a>.
+      </p>
+    </div>
+  </section>
+  <section class="max-w-4xl mx-auto px-6 lg:px-10 py-16">
+    <div class="divide-y divide-[var(--color-line)] border-t border-b border-[var(--color-line)]">
+      {faqs.map((i) => (
+        <details class="group">
+          <summary class="flex justify-between items-start gap-4 cursor-pointer py-5 list-none">
+            <span class="font-medium text-lg leading-tight">{i.q}</span>
+            <span class="flex-shrink-0 text-2xl text-[var(--color-mute)] group-open:rotate-45 transition-transform">+</span>
+          </summary>
+          <p class="pb-5 text-[var(--color-mute)] leading-relaxed">{i.a}</p>
+        </details>
+      ))}
+    </div>
+    <p class="mt-10 text-[var(--color-mute)] text-sm">Still stuck? <a href="/contact" class="link-underline text-[var(--color-ink)]">Contact us</a> — we reply within 24h.</p>
+  </section>
+</Base>
