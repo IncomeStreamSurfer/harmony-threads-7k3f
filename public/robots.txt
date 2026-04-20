@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /checkout/
+Disallow: /cart
+
+Sitemap: https://harmony-threads-7k3f.vercel.app/sitemap-index.xml
