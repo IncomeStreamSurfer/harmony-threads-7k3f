@@ -1,15 +1,10 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { getAllProducts, getProductBySlug } from '../../lib/products';
-
-export async function getStaticPaths() {
-  const products = await getAllProducts();
-  return products.map((p) => ({ params: { slug: p.slug } }));
-}
+import { getProductBySlug } from '../../lib/products';
 
 const { slug } = Astro.params;
-const product = await getProductBySlug(slug);
-if (!product) return Astro.redirect('/shop', 302);
+const product = slug ? await getProductBySlug(slug) : undefined;
+if (!product) { return new Response('Not found', { status: 404 }); }
 
 const siteUrl = (Astro.site?.toString() || '').replace(/\/$/, '');
 const sizes = Array.from(new Set(product.variants.map((v) => v.size)));

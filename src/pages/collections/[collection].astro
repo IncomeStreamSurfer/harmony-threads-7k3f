@@ -2,36 +2,15 @@
 import Base from '../../layouts/Base.astro';
 import { COLLECTIONS, getCollection } from '../../lib/products';
 
-export async function getStaticPaths() {
-  return COLLECTIONS.map((c) => ({ params: { collection: c.slug } }));
-}
-
 const { collection } = Astro.params;
 const meta = COLLECTIONS.find((c) => c.slug === collection);
-if (!meta) { return Astro.redirect('/collections', 302); }
-const products = await getCollection(collection);
+if (!meta) { return new Response('Not found', { status: 404 }); }
+const products = await getCollection(collection || '');
 const others = COLLECTIONS.filter((c) => c.slug !== collection);
 const siteUrl = (Astro.site?.toString() || '').replace(/\/$/, '');
 
-const collLd = {
-  '@context': 'https://schema.org',
-  '@type': 'CollectionPage',
-  name: meta.name,
-  url: `${siteUrl}/collections/${meta.slug}`,
-  mainEntity: {
-    '@type': 'ItemList',
-    itemListElement: products.map((p, i) => ({ '@type': 'ListItem', position: i + 1, url: `${siteUrl}/products/${p.slug}`, name: p.name })),
-  },
-};
-const breadcrumbLd = {
-  '@context': 'https://schema.org',
-  '@type': 'BreadcrumbList',
-  itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Home', item: siteUrl },
-    { '@type': 'ListItem', position: 2, name: 'Collections', item: `${siteUrl}/collections` },
-    { '@type': 'ListItem', position: 3, name: meta.name, item: `${siteUrl}/collections/${meta.slug}` },
-  ],
-};
+const collLd = { '@context': 'https://schema.org', '@type': 'CollectionPage', name: meta.name, url: `${siteUrl}/collections/${meta.slug}`, mainEntity: { '@type': 'ItemList', itemListElement: products.map((p, i) => ({ '@type': 'ListItem', position: i + 1, url: `${siteUrl}/products/${p.slug}`, name: p.name })) } };
+const breadcrumbLd = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: 'Home', item: siteUrl }, { '@type': 'ListItem', position: 2, name: 'Collections', item: `${siteUrl}/collections` }, { '@type': 'ListItem', position: 3, name: meta.name, item: `${siteUrl}/collections/${meta.slug}` }] };
 ---
 <Base
   title={`${meta.name} | MyStore`}
