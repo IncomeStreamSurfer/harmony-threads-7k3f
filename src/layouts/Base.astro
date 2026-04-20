@@ -1,0 +1,60 @@
+---
+import '../styles/global.css';
+import SEOHead from '../components/SEOHead.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  ogImage?: string;
+  ogType?: string;
+  canonicalUrl?: string;
+  structuredData?: object | object[];
+  noindex?: boolean;
+  publishDate?: string;
+  modifiedDate?: string;
+  author?: string;
+  tags?: string[];
+}
+
+const props = Astro.props as Props;
+
+const siteUrl = (Astro.site?.toString() || 'https://harmony-threads-7k3f.vercel.app').replace(/\/$/, '');
+
+const orgLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'MyStore',
+  url: siteUrl,
+  logo: `${siteUrl}/favicon.svg`,
+  sameAs: [],
+};
+
+const baseStructured = [orgLd];
+const extra = Array.isArray(props.structuredData) ? props.structuredData : (props.structuredData ? [props.structuredData] : []);
+const structured = [...baseStructured, ...extra];
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <SEOHead
+      title={props.title}
+      description={props.description}
+      ogImage={props.ogImage}
+      ogType={props.ogType}
+      canonicalUrl={props.canonicalUrl}
+      structuredData={structured}
+      noindex={props.noindex}
+      publishDate={props.publishDate}
+      modifiedDate={props.modifiedDate}
+      author={props.author}
+      tags={props.tags}
+    />
+  </head>
+  <body class="min-h-screen flex flex-col">
+    <Nav />
+    <main class="flex-1"><slot /></main>
+    <Footer />
+  </body>
+</html>

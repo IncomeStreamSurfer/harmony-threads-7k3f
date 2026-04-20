@@ -1,0 +1,69 @@
+---
+const year = new Date().getFullYear();
+---
+<footer class="border-t border-[var(--color-line)] bg-white">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10 py-16 grid grid-cols-2 md:grid-cols-4 gap-10 text-sm">
+    <div class="col-span-2">
+      <a href="/" class="font-display text-3xl tracking-tight flex items-center gap-2">
+        <span class="inline-block w-2.5 h-2.5 rounded-full bg-[var(--color-accent)]"></span>
+        MyStore
+      </a>
+      <p class="mt-4 max-w-sm text-[var(--color-mute)] leading-relaxed">
+        Curated graphic apparel and music-inspired goods, shipped fast from our studio.
+      </p>
+      <form class="mt-6 flex gap-2 max-w-sm" data-newsletter>
+        <input type="email" required name="email" placeholder="you@domain.com"
+          class="flex-1 border border-[var(--color-line)] bg-white px-4 py-3 text-sm focus:outline-none focus:border-[var(--color-ink)]" />
+        <button class="btn-primary !py-3 !px-5 text-sm">Join</button>
+      </form>
+    </div>
+
+    <div>
+      <h4 class="text-xs tracking-widest uppercase text-[var(--color-mute)] mb-4">Shop</h4>
+      <ul class="space-y-2">
+        <li><a href="/shop" class="link-underline">All products</a></li>
+        <li><a href="/collections/bestsellers" class="link-underline">Bestsellers</a></li>
+        <li><a href="/collections/new-arrivals" class="link-underline">New arrivals</a></li>
+        <li><a href="/collections/sale" class="link-underline">Sale</a></li>
+        <li><a href="/collections/gifts" class="link-underline">Gifts</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h4 class="text-xs tracking-widest uppercase text-[var(--color-mute)] mb-4">Help</h4>
+      <ul class="space-y-2">
+        <li><a href="/faq" class="link-underline">FAQ</a></li>
+        <li><a href="/shipping-returns" class="link-underline">Shipping &amp; returns</a></li>
+        <li><a href="/contact" class="link-underline">Contact</a></li>
+        <li><a href="/about" class="link-underline">About us</a></li>
+        <li><a href="/blog" class="link-underline">Journal</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="border-t border-[var(--color-line)] py-6">
+    <div class="max-w-7xl mx-auto px-6 lg:px-10 flex flex-col sm:flex-row items-center justify-between text-xs text-[var(--color-mute)]">
+      <p>© {year} MyStore. All rights reserved.</p>
+      <div class="flex items-center gap-5 mt-3 sm:mt-0">
+        <a href="/shipping-returns" class="link-underline">Shipping</a>
+        <a href="/faq" class="link-underline">FAQ</a>
+        <a href="/contact" class="link-underline">Contact</a>
+      </div>
+    </div>
+  </div>
+</footer>
+<script>
+  document.querySelectorAll('form[data-newsletter]').forEach((f) => {
+    f.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData(f);
+      const email = String(fd.get('email') || '');
+      if (!email) return;
+      try {
+        await fetch('/api/subscribe', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }) });
+        f.reset();
+        f.insertAdjacentHTML('afterend', '<p class="text-xs mt-3 text-[var(--color-mute)]">Thanks — you’re on the list.</p>');
+      } catch {}
+    });
+  });
+</script>

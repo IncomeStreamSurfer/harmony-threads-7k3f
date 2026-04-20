@@ -1,0 +1,42 @@
+---
+const links = [
+  { href: '/shop', label: 'Shop' },
+  { href: '/collections', label: 'Collections' },
+  { href: '/blog', label: 'Journal' },
+  { href: '/about', label: 'About' },
+  { href: '/contact', label: 'Contact' },
+];
+---
+<header class="sticky top-0 z-40 border-b border-[var(--color-line)] bg-[var(--color-paper)]/90 backdrop-blur">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10 h-16 flex items-center justify-between">
+    <a href="/" class="font-display text-2xl tracking-tight flex items-center gap-2">
+      <span class="inline-block w-2.5 h-2.5 rounded-full bg-[var(--color-accent)]"></span>
+      MyStore
+    </a>
+    <nav class="hidden md:flex items-center gap-8 text-sm">
+      {links.map(l => (
+        <a href={l.href} class="link-underline text-[var(--color-ink)]/80 hover:text-[var(--color-ink)]">{l.label}</a>
+      ))}
+    </nav>
+    <div class="flex items-center gap-4">
+      <a href="/shop" class="hidden sm:inline text-sm link-underline">Search</a>
+      <a href="/cart" class="relative text-sm border border-[var(--color-ink)] px-4 py-2 hover:bg-[var(--color-ink)] hover:text-[var(--color-paper)] transition">
+        Cart <span id="cart-count" class="ml-1 font-semibold">0</span>
+      </a>
+    </div>
+  </div>
+</header>
+<script>
+  const sync = () => {
+    try {
+      const raw = localStorage.getItem('mystore_cart');
+      const items = raw ? JSON.parse(raw) : [];
+      const count = items.reduce((n, i) => n + (i.qty || 0), 0);
+      const el = document.getElementById('cart-count');
+      if (el) el.textContent = String(count);
+    } catch {}
+  };
+  sync();
+  window.addEventListener('storage', sync);
+  document.addEventListener('cart:changed', sync);
+</script>
