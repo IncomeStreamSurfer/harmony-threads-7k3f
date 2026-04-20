@@ -1,0 +1,18 @@
+---
+import Base from '../../layouts/Base.astro';
+---
+<Base
+  title="Order Cancelled | MyStore"
+  description="Changed your mind? Your cart is saved at MyStore. Come back anytime or browse more great products now."
+  noindex={true}
+>
+  <section class="max-w-3xl mx-auto px-6 lg:px-10 py-24 text-center">
+    <span class="chip">Checkout cancelled</span>
+    <h1 class="mt-5 font-display text-5xl sm:text-6xl tracking-tight">No worries — your cart is saved.</h1>
+    <p class="mt-6 text-[var(--color-mute)] leading-relaxed max-w-xl mx-auto">Nothing was charged. Head back to finish checking out, or browse a little more.</p>
+    <div class="mt-10 flex flex-wrap gap-3 justify-center">
+      <a href="/cart" class="btn-primary">Return to cart</a>
+      <a href="/shop" class="btn-ghost">Browse more →</a>
+    </div>
+  </section>
+</Base>

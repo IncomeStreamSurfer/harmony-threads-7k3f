@@ -1,0 +1,77 @@
+---
+import Base from '../layouts/Base.astro';
+
+const siteUrl = (Astro.site?.toString() || '').replace(/\/$/, '');
+const breadcrumbLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: siteUrl },
+    { '@type': 'ListItem', position: 2, name: 'Cart', item: `${siteUrl}/cart` },
+  ],
+};
+---
+<Base
+  title="Cart | MyStore"
+  description="Review your MyStore cart, update quantities, and proceed to checkout. Fast, secure payment and easy returns."
+  noindex={true}
+  structuredData={breadcrumbLd}
+>
+  <section class="max-w-5xl mx-auto px-6 lg:px-10 py-16 lg:py-24">
+    <h1 class="font-display text-5xl tracking-tight">Your shopping cart</h1>
+    <p class="mt-3 text-[var(--color-mute)] max-w-xl">Review your items and head to secure checkout — powered by Stripe.</p>
+    <div id="cart-empty" class="hidden mt-12 border border-dashed border-[var(--color-line)] p-10 text-center">
+      <p class="text-[var(--color-mute)]">Your cart is empty.</p>
+      <a href="/shop" class="btn-primary mt-6">Start shopping →</a>
+    </div>
+    <div id="cart-full" class="mt-12 grid lg:grid-cols-3 gap-10">
+      <div id="cart-items" class="lg:col-span-2 space-y-4"></div>
+      <aside class="bg-white border border-[var(--color-line)] p-6 lg:p-7 h-fit sticky top-24">
+        <h2 class="font-display text-2xl">Order summary</h2>
+        <dl class="mt-5 space-y-2 text-sm">
+          <div class="flex justify-between"><dt class="text-[var(--color-mute)]">Subtotal</dt><dd id="subtotal">£0.00</dd></div>
+          <div class="flex justify-between"><dt class="text-[var(--color-mute)]">Shipping</dt><dd>At checkout</dd></div>
+        </dl>
+        <div class="flex justify-between font-semibold text-lg border-t border-[var(--color-line)] pt-4 mt-4"><span>Total</span><span id="total">£0.00</span></div>
+        <button id="checkout-btn" type="button" class="btn-primary w-full justify-center mt-6">Checkout with Stripe →</button>
+        <p id="checkout-msg" class="mt-3 text-sm text-[var(--color-accent)] text-center" style="min-height:1rem"></p>
+      </aside>
+    </div>
+  </section>
+  <script>
+    const $ = (id) => document.getElementById(id);
+    function render() {
+      const raw = localStorage.getItem('mystore_cart');
+      const items = raw ? JSON.parse(raw) : [];
+      const wrap = $('cart-items'), empty = $('cart-empty'), full = $('cart-full');
+      if (!items.length) { empty.classList.remove('hidden'); full.classList.add('hidden'); return; }
+      empty.classList.add('hidden'); full.classList.remove('hidden');
+      wrap.innerHTML = items.map((i) => `<article class="flex gap-4 bg-white border border-[var(--color-line)] p-4"><img src="${i.image_url}" alt="${i.name}" class="w-24 h-28 object-cover" /><div class="flex-1"><h3 class="font-display text-lg">${i.name}</h3><p class="text-xs text-[var(--color-mute)] mt-1">${i.variant}</p><p class="mt-2 font-semibold">£${(i.price_pence/100).toFixed(2)}</p><div class="mt-3 flex items-center gap-2 text-sm"><button data-sku="${i.sku}" data-step="-1" class="qty-step w-8 h-8 border border-[var(--color-line)]">−</button><span class="w-8 text-center">${i.qty}</span><button data-sku="${i.sku}" data-step="1" class="qty-step w-8 h-8 border border-[var(--color-line)]">+</button><button data-sku="${i.sku}" class="remove ml-4 text-xs link-underline text-[var(--color-mute)]">Remove</button></div></div><p class="text-right font-semibold">£${((i.price_pence*i.qty)/100).toFixed(2)}</p></article>`).join('');
+      const sub = items.reduce((n,i)=>n+i.qty*i.price_pence,0);
+      $('subtotal').textContent = '£'+(sub/100).toFixed(2); $('total').textContent = '£'+(sub/100).toFixed(2);
+      wrap.querySelectorAll('.qty-step').forEach(b => b.addEventListener('click', () => {
+        const sku = b.dataset.sku, step = parseInt(b.dataset.step,10);
+        const items = JSON.parse(localStorage.getItem('mystore_cart')||'[]').map(i => i.sku===sku ? { ...i, qty: Math.max(0, i.qty+step) } : i).filter(i => i.qty > 0);
+        localStorage.setItem('mystore_cart', JSON.stringify(items));
+        document.dispatchEvent(new CustomEvent('cart:changed')); render();
+      }));
+      wrap.querySelectorAll('.remove').forEach(b => b.addEventListener('click', () => {
+        const sku = b.dataset.sku;
+        const items = JSON.parse(localStorage.getItem('mystore_cart')||'[]').filter(i => i.sku !== sku);
+        localStorage.setItem('mystore_cart', JSON.stringify(items));
+        document.dispatchEvent(new CustomEvent('cart:changed')); render();
+      }));
+    }
+    render();
+    $('checkout-btn').addEventListener('click', async () => {
+      const items = JSON.parse(localStorage.getItem('mystore_cart')||'[]'); if (!items.length) return;
+      const msg = $('checkout-msg'); msg.textContent = 'Redirecting to Stripe…';
+      try {
+        const r = await fetch('/api/checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ items }) });
+        const data = await r.json();
+        if (data.url) { window.location.href = data.url; return; }
+        msg.textContent = data.error || 'Checkout unavailable.';
+      } catch { msg.textContent = 'Network error.'; }
+    });
+  </script>
+</Base>

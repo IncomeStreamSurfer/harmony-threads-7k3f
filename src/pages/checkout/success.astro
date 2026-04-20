@@ -1,0 +1,21 @@
+---
+import Base from '../../layouts/Base.astro';
+const sessionId = Astro.url.searchParams.get('session_id') || '';
+---
+<Base
+  title="Order Confirmed | MyStore"
+  description="Your MyStore order is confirmed. We'll email your receipt and shipping details shortly."
+  noindex={true}
+>
+  <section class="max-w-3xl mx-auto px-6 lg:px-10 py-24 text-center">
+    <span class="chip">Order confirmed</span>
+    <h1 class="mt-5 font-display text-5xl sm:text-6xl tracking-tight">Thank you — your order is confirmed!</h1>
+    <p class="mt-6 text-[var(--color-mute)] leading-relaxed max-w-xl mx-auto">We've received your order. You'll get a receipt from Stripe and a separate confirmation email from us.</p>
+    {sessionId && <p class="mt-4 text-xs text-[var(--color-mute)]">Reference <code class="bg-white border border-[var(--color-line)] px-2 py-1">{sessionId.slice(0, 14)}…</code></p>}
+    <div class="mt-10 flex flex-wrap gap-3 justify-center">
+      <a href="/" class="btn-primary">Back to homepage</a>
+      <a href="/shop" class="btn-ghost">Keep shopping →</a>
+    </div>
+  </section>
+  <script>try { localStorage.removeItem('mystore_cart'); document.dispatchEvent(new CustomEvent('cart:changed')); } catch {}</script>
+</Base>

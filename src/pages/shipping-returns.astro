@@ -1,0 +1,45 @@
+---
+import Base from '../layouts/Base.astro';
+
+const siteUrl = (Astro.site?.toString() || '').replace(/\/$/, '');
+const breadcrumbLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: siteUrl },
+    { '@type': 'ListItem', position: 2, name: 'Shipping & Returns', item: `${siteUrl}/shipping-returns` },
+  ],
+};
+---
+<Base
+  title="Shipping & Returns | MyStore"
+  description="Read MyStore's shipping and returns policy. Fast delivery, easy returns, and full refunds. Shop with complete confidence."
+  structuredData={breadcrumbLd}
+>
+  <section class="border-b border-[var(--color-line)] bg-white">
+    <div class="max-w-5xl mx-auto px-6 lg:px-10 py-16 lg:py-20">
+      <h1 class="font-display text-5xl sm:text-6xl tracking-tight">Shipping &amp; Returns — easy and hassle-free.</h1>
+      <p class="mt-5 max-w-2xl text-[var(--color-mute)] leading-relaxed">The full policy — how fast things ship, how much it costs, and how returns work. Questions? <a href="/contact" class="link-underline text-[var(--color-ink)]">Get in touch</a>.</p>
+    </div>
+  </section>
+  <section class="max-w-4xl mx-auto px-6 lg:px-10 py-16 space-y-14">
+    <article>
+      <h2 class="font-display text-3xl tracking-tight">UK shipping</h2>
+      <div class="mt-6 grid md:grid-cols-2 gap-4">
+        <div class="border border-[var(--color-line)] p-6 bg-white"><p class="text-xs uppercase tracking-widest text-[var(--color-mute)]">Standard · 2-3 days</p><p class="font-display text-2xl mt-2">£3.95</p><p class="text-sm text-[var(--color-mute)] mt-2">Royal Mail Tracked 48.</p></div>
+        <div class="border-2 border-[var(--color-ink)] p-6 bg-white"><p class="text-xs uppercase tracking-widest text-[var(--color-accent)] font-semibold">Express · next day</p><p class="font-display text-2xl mt-2">£5.95 <span class="text-sm font-normal">— free over £40</span></p><p class="text-sm text-[var(--color-mute)] mt-2">Royal Mail Tracked 24 if ordered by 2pm GMT.</p></div>
+      </div>
+    </article>
+    <article><h2 class="font-display text-3xl tracking-tight">EU shipping (DDP)</h2><p class="mt-5 text-[var(--color-mute)] leading-relaxed">£9.95 tracked, 3-7 days with DPD. All duties pre-paid by MyStore at checkout — no surprise customs invoice.</p></article>
+    <article><h2 class="font-display text-3xl tracking-tight">Rest of world</h2><p class="mt-5 text-[var(--color-mute)] leading-relaxed">£14.95 tracked, 7-14 working days via DHL / Royal Mail International Tracked.</p></article>
+    <article class="bg-[var(--color-paper)] border border-[var(--color-line)] p-8 lg:p-10">
+      <h2 class="font-display text-3xl tracking-tight">30-day returns — no fuss.</h2>
+      <p class="mt-4 text-[var(--color-ink)]/80 leading-relaxed">Not right? Send it back within 30 days and we'll refund your original payment method in full.</p>
+      <div class="mt-6 grid md:grid-cols-3 gap-4 text-sm">
+        <div class="border border-[var(--color-line)] bg-white p-5"><p class="font-semibold">1 · Request</p><p class="mt-2 text-[var(--color-mute)]">Email hello@mystore.example with your order number.</p></div>
+        <div class="border border-[var(--color-line)] bg-white p-5"><p class="font-semibold">2 · Post</p><p class="mt-2 text-[var(--color-mute)]">Pack and drop at any Royal Mail point.</p></div>
+        <div class="border border-[var(--color-line)] bg-white p-5"><p class="font-semibold">3 · Refund</p><p class="mt-2 text-[var(--color-mute)]">Processed within 2 working days of receipt.</p></div>
+      </div>
+    </article>
+  </section>
+</Base>
