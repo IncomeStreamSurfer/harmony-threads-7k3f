@@ -1,0 +1,12 @@
+import { createClient } from '@supabase/supabase-js';
+
+const url = import.meta.env.PUBLIC_SUPABASE_URL || process.env.PUBLIC_SUPABASE_URL || '';
+const anon = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || process.env.PUBLIC_SUPABASE_ANON_KEY || '';
+
+export const supabase = url && anon
+  ? createClient(url, anon, { auth: { persistSession: false } })
+  : null as any;
+
+export function sbOk(): boolean {
+  return !!url && !!anon;
+}
