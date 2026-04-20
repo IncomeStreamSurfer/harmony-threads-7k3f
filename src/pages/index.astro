@@ -1,0 +1,124 @@
+---
+import Base from '../layouts/Base.astro';
+import { getAllProducts, getCollection } from '../lib/products';
+
+const products = await getAllProducts();
+const featured = products.slice(0, 3);
+const bestsellers = (await getCollection('bestsellers')).slice(0, 4);
+
+const siteUrl = (Astro.site?.toString() || '').replace(/\/$/, '');
+const websiteLd = { '@context': 'https://schema.org', '@type': 'WebSite', name: 'MyStore', url: siteUrl, description: 'Quality Products, Delivered to You', potentialAction: { '@type': 'SearchAction', target: `${siteUrl}/shop?q={search_term_string}`, 'query-input': 'required name=search_term_string' } };
+---
+<Base
+  title="MyStore | Quality Products Online"
+  description="Shop the best products online at MyStore. Discover curated collections, unbeatable prices, and fast shipping. Start shopping today."
+  structuredData={websiteLd}
+>
+  <section class="relative overflow-hidden">
+    <div class="absolute inset-0 -z-10">
+      <div class="absolute inset-0 bg-gradient-to-br from-[#faf7f2] via-[#f0ece3] to-[#ded5c4]"></div>
+      <div class="absolute -right-32 -top-32 w-[560px] h-[560px] rounded-full bg-[var(--color-accent)]/20 blur-3xl"></div>
+      <div class="absolute -left-40 bottom-0 w-[420px] h-[420px] rounded-full bg-[var(--color-ink)]/10 blur-3xl"></div>
+    </div>
+    <div class="max-w-7xl mx-auto px-6 lg:px-10 pt-16 lg:pt-24 pb-20 lg:pb-28 grid lg:grid-cols-12 gap-12 items-center">
+      <div class="lg:col-span-7">
+        <span class="chip">Spring ’26 Drop · Live</span>
+        <h1 class="mt-6 font-display text-5xl sm:text-6xl lg:text-7xl leading-[1.02] tracking-tight">Quality products,<br /><span class="italic text-[var(--color-accent)]">delivered</span> to your door.</h1>
+        <p class="mt-6 text-lg text-[var(--color-mute)] max-w-xl leading-relaxed">A curated online shop for graphic apparel, music-inspired goods, and everyday essentials worth owning.</p>
+        <div class="mt-9 flex flex-wrap gap-3">
+          <a href="/shop" class="btn-primary">Shop the collection →</a>
+          <a href="/collections/bestsellers" class="btn-ghost">Bestsellers</a>
+        </div>
+        <div class="mt-10 flex items-center gap-6 text-sm text-[var(--color-mute)]">
+          <div class="flex -space-x-2">
+            <span class="w-7 h-7 rounded-full border-2 border-[var(--color-paper)] bg-[#e63946]"></span>
+            <span class="w-7 h-7 rounded-full border-2 border-[var(--color-paper)] bg-[#0a0a0a]"></span>
+            <span class="w-7 h-7 rounded-full border-2 border-[var(--color-paper)] bg-[#6b6b6b]"></span>
+            <span class="w-7 h-7 rounded-full border-2 border-[var(--color-paper)] bg-[#ded5c4]"></span>
+          </div>
+          <span>Loved by <strong class="text-[var(--color-ink)]">3,200+</strong> shoppers</span>
+          <span>· ★ 4.9 avg</span>
+        </div>
+      </div>
+      <div class="lg:col-span-5 relative">
+        <div class="relative aspect-[4/5] max-w-md mx-auto">
+          <div class="absolute inset-0 bg-[var(--color-ink)] rotate-3 rounded-sm"></div>
+          <img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=900&q=80" alt="A customer wearing one of our graphic t-shirts" class="absolute inset-0 w-full h-full object-cover rounded-sm -rotate-2 shadow-2xl" />
+          <div class="absolute -bottom-6 -left-6 bg-white border border-[var(--color-line)] px-5 py-4 shadow-xl">
+            <p class="text-xs uppercase tracking-widest text-[var(--color-mute)]">Bestseller</p>
+            <p class="font-display text-xl mt-1">The Band Tee</p>
+            <p class="text-sm mt-1"><strong>£19.99</strong> <span class="line-through text-[var(--color-mute)]">£24.99</span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="border-y border-[var(--color-line)] bg-white">
+    <div class="max-w-7xl mx-auto px-6 lg:px-10 py-6 grid grid-cols-2 md:grid-cols-4 gap-6 text-sm">
+      <div class="flex items-start gap-3"><span class="w-2 h-2 mt-1.5 rounded-full bg-[var(--color-accent)]"></span><div><p class="font-semibold">Free UK shipping</p><p class="text-[var(--color-mute)]">On orders over £40</p></div></div>
+      <div class="flex items-start gap-3"><span class="w-2 h-2 mt-1.5 rounded-full bg-[var(--color-accent)]"></span><div><p class="font-semibold">30-day returns</p><p class="text-[var(--color-mute)]">No questions asked</p></div></div>
+      <div class="flex items-start gap-3"><span class="w-2 h-2 mt-1.5 rounded-full bg-[var(--color-accent)]"></span><div><p class="font-semibold">Secure checkout</p><p class="text-[var(--color-mute)]">Powered by Stripe</p></div></div>
+      <div class="flex items-start gap-3"><span class="w-2 h-2 mt-1.5 rounded-full bg-[var(--color-accent)]"></span><div><p class="font-semibold">Real humans</p><p class="text-[var(--color-mute)]">Reply within 24h</p></div></div>
+    </div>
+  </section>
+
+  <section class="max-w-7xl mx-auto px-6 lg:px-10 py-20 lg:py-28">
+    <div class="flex items-end justify-between mb-10">
+      <div><span class="chip">Featured</span><h2 class="mt-4 font-display text-4xl sm:text-5xl tracking-tight">Fresh from the studio</h2></div>
+      <a href="/shop" class="hidden md:inline-flex text-sm link-underline">Shop all →</a>
+    </div>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      {featured.map((p) => (
+        <a href={`/products/${p.slug}`} class="group block">
+          <div class="aspect-[4/5] bg-[var(--color-line)]/60 overflow-hidden relative">
+            <img src={p.image_url} alt={p.image_alt} class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+            {p.compare_at_pence && p.compare_at_pence > p.price_pence && (<span class="absolute top-3 left-3 bg-[var(--color-accent)] text-white text-xs px-2 py-1 font-semibold">SAVE £{((p.compare_at_pence - p.price_pence)/100).toFixed(0)}</span>)}
+          </div>
+          <div class="mt-4 flex items-start justify-between">
+            <div><p class="text-xs uppercase tracking-widest text-[var(--color-mute)]">{p.vendor}</p><h3 class="font-display text-xl mt-1">{p.name}</h3></div>
+            <p><span class="font-semibold">£{(p.price_pence/100).toFixed(2)}</span></p>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="bg-[var(--color-ink)] text-[var(--color-paper)]">
+    <div class="max-w-7xl mx-auto px-6 lg:px-10 py-20 lg:py-28 grid lg:grid-cols-2 gap-12 items-center">
+      <div>
+        <span class="chip !bg-transparent !border-[var(--color-paper)]/40 !text-[var(--color-paper)]/70">Shop by mood</span>
+        <h2 class="mt-4 font-display text-4xl sm:text-5xl tracking-tight">A collection for every occasion.</h2>
+        <p class="mt-5 text-[var(--color-paper)]/80 max-w-md">From <a href="/collections/bestsellers" class="underline underline-offset-4">fan favourites</a> to <a href="/collections/new-arrivals" class="underline underline-offset-4">just-landed drops</a> and <a href="/collections/gifts" class="underline underline-offset-4">gift-ready picks</a>.</p>
+        <a href="/collections" class="inline-flex mt-8 px-6 py-3 bg-[var(--color-paper)] text-[var(--color-ink)] font-semibold hover:bg-[var(--color-accent)] hover:text-white transition">Explore all →</a>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <a href="/collections/bestsellers" class="relative aspect-square overflow-hidden translate-y-6"><img src="https://images.unsplash.com/photo-1503341504253-dff4815485f1?auto=format&fit=crop&w=700&q=80" alt="Bestsellers" class="w-full h-full object-cover" /><div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div><p class="absolute bottom-4 left-4 font-display text-2xl">Bestsellers →</p></a>
+        <a href="/collections/new-arrivals" class="relative aspect-square overflow-hidden"><img src="https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?auto=format&fit=crop&w=700&q=80" alt="New arrivals" class="w-full h-full object-cover" /><div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div><p class="absolute bottom-4 left-4 font-display text-2xl">New arrivals →</p></a>
+        <a href="/collections/sale" class="relative aspect-square overflow-hidden translate-y-6"><img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=700&q=80" alt="Sale" class="w-full h-full object-cover" /><div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div><p class="absolute bottom-4 left-4 font-display text-2xl">Sale →</p></a>
+        <a href="/collections/gifts" class="relative aspect-square overflow-hidden"><img src="https://images.unsplash.com/photo-1513885535751-8b9238bd345a?auto=format&fit=crop&w=700&q=80" alt="Gifts" class="w-full h-full object-cover" /><div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div><p class="absolute bottom-4 left-4 font-display text-2xl">Gifts →</p></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="max-w-6xl mx-auto px-6 lg:px-10 py-20 lg:py-24">
+    <span class="chip">Reviews</span>
+    <h2 class="mt-4 font-display text-4xl sm:text-5xl tracking-tight">What shoppers say.</h2>
+    <div class="mt-12 grid md:grid-cols-3 gap-6">
+      <figure class="bg-white border border-[var(--color-line)] p-7"><p class="text-yellow-500 mb-3">★★★★★</p><blockquote class="font-display text-xl leading-snug">“Shipping was faster than Amazon — and the packaging actually felt considered.”</blockquote><figcaption class="mt-5 text-sm text-[var(--color-mute)]"><strong class="text-[var(--color-ink)]">Aisha K.</strong> · Manchester</figcaption></figure>
+      <figure class="bg-white border border-[var(--color-line)] p-7"><p class="text-yellow-500 mb-3">★★★★★</p><blockquote class="font-display text-xl leading-snug">“The softest cotton I’ve worn in years. The print hasn’t cracked after 20 washes.”</blockquote><figcaption class="mt-5 text-sm text-[var(--color-mute)]"><strong class="text-[var(--color-ink)]">James P.</strong> · Bristol</figcaption></figure>
+      <figure class="bg-white border border-[var(--color-line)] p-7"><p class="text-yellow-500 mb-3">★★★★★</p><blockquote class="font-display text-xl leading-snug">“Customer service replied in an hour and sorted my size swap same-day.”</blockquote><figcaption class="mt-5 text-sm text-[var(--color-mute)]"><strong class="text-[var(--color-ink)]">Nora S.</strong> · Edinburgh</figcaption></figure>
+    </div>
+  </section>
+
+  <section class="bg-[var(--color-accent)] text-white">
+    <div class="max-w-5xl mx-auto px-6 lg:px-10 py-16 lg:py-20 text-center">
+      <h2 class="font-display text-4xl sm:text-5xl tracking-tight">Ready to find something you’ll love?</h2>
+      <p class="mt-4 opacity-90 max-w-xl mx-auto">Free UK shipping on orders over £40.</p>
+      <div class="mt-8 flex flex-wrap gap-3 justify-center">
+        <a href="/shop" class="px-6 py-3 bg-white text-[var(--color-ink)] font-semibold hover:bg-[var(--color-ink)] hover:text-white transition">Start shopping →</a>
+        <a href="/faq" class="px-6 py-3 border border-white hover:bg-white hover:text-[var(--color-accent)] transition">Read FAQ</a>
+      </div>
+    </div>
+  </section>
+</Base>
