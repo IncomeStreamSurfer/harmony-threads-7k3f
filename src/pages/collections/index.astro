@@ -1,0 +1,52 @@
+---
+import Base from '../../layouts/Base.astro';
+import { COLLECTIONS, getCollection } from '../../lib/products';
+
+const siteUrl = (Astro.site?.toString() || '').replace(/\/$/, '');
+const groups = await Promise.all(COLLECTIONS.map(async (c) => ({ ...c, products: await getCollection(c.slug) })));
+
+const collectionLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'Browse our collections',
+  url: `${siteUrl}/collections`,
+  mainEntity: {
+    '@type': 'ItemList',
+    itemListElement: COLLECTIONS.map((c, i) => ({ '@type': 'ListItem', position: i + 1, name: c.name, url: `${siteUrl}/collections/${c.slug}` })),
+  },
+};
+const breadcrumbLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: siteUrl },
+    { '@type': 'ListItem', position: 2, name: 'Collections', item: `${siteUrl}/collections` },
+  ],
+};
+---
+<Base
+  title="Collections | MyStore"
+  description="Explore all MyStore collections. From everyday essentials to specialty finds, discover the perfect category for you."
+  structuredData={[collectionLd, breadcrumbLd]}
+>
+  <section class="border-b border-[var(--color-line)] bg-white">
+    <div class="max-w-7xl mx-auto px-6 lg:px-10 py-14 lg:py-20">
+      <h1 class="font-display text-5xl sm:text-6xl tracking-tight">Browse our collections</h1>
+      <p class="mt-4 max-w-2xl text-[var(--color-mute)] leading-relaxed">Every item on MyStore is organised into four simple collections. Not sure where to start? Browse the <a href="/shop" class="link-underline font-medium text-[var(--color-ink)]">full catalogue</a>.</p>
+    </div>
+  </section>
+  <section class="max-w-7xl mx-auto px-6 lg:px-10 py-16 grid md:grid-cols-2 gap-6 lg:gap-8">
+    {groups.map((c) => (
+      <a href={`/collections/${c.slug}`} class="group relative block overflow-hidden min-h-[360px] lg:min-h-[460px]">
+        <img src={c.hero} alt={`${c.name} collection`} class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+        <div class="relative z-10 h-full flex flex-col justify-end p-8 text-white">
+          <span class="chip !bg-white/10 !border-white/30 !text-white/80">{c.products.length} products</span>
+          <h2 class="mt-3 font-display text-4xl tracking-tight">{c.name}</h2>
+          <p class="mt-2 text-white/90 max-w-md">{c.tagline}</p>
+          <span class="mt-4 inline-flex items-center gap-1 text-sm link-underline">Shop {c.name.toLowerCase()} →</span>
+        </div>
+      </a>
+    ))}
+  </section>
+</Base>

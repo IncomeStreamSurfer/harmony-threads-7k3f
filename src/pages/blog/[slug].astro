@@ -1,0 +1,51 @@
+---
+import Base from '../../layouts/Base.astro';
+import { supabase, sbOk } from '../../lib/supabase';
+
+const { slug } = Astro.params;
+if (!slug) return Astro.redirect('/blog', 302);
+
+let post = null;
+if (sbOk()) {
+  const { data } = await supabase.from('content').select('*').eq('slug', slug).not('published_at', 'is', null).maybeSingle();
+  post = data;
+}
+if (!post) return new Response('Not found', { status: 404 });
+
+const siteUrl = (Astro.site?.toString() || '').replace(/\/$/, '');
+const articleLd = { '@context': 'https://schema.org', '@type': 'BlogPosting', headline: post.title, datePublished: post.published_at, dateModified: post.updated_at, author: { '@type': 'Organization', name: 'MyStore' }, publisher: { '@type': 'Organization', name: 'MyStore', logo: { '@type': 'ImageObject', url: `${siteUrl}/favicon.svg` } }, image: post.cover_image_url, mainEntityOfPage: `${siteUrl}/blog/${post.slug}`, description: post.seo_description || post.excerpt };
+const breadcrumbLd = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: 'Home', item: siteUrl }, { '@type': 'ListItem', position: 2, name: 'Journal', item: `${siteUrl}/blog` }, { '@type': 'ListItem', position: 3, name: post.title, item: `${siteUrl}/blog/${post.slug}` }] };
+
+function renderBody(md) {
+  if (!md) return '';
+  return md.split(/\n{2,}/).map((chunk) => {
+    const t = chunk.trim(); if (!t) return '';
+    if (t.startsWith('### ')) return `<h3 class="font-display text-2xl mt-10 mb-4">${t.slice(4)}</h3>`;
+    if (t.startsWith('## ')) return `<h2 class="font-display text-3xl mt-12 mb-4">${t.slice(3)}</h2>`;
+    return `<p class="mb-5 text-[var(--color-ink)]/85 leading-relaxed">${t.replace(/\n/g, '<br/>')}</p>`;
+  }).join('\n');
+}
+---
+<Base
+  title={post.seo_title || `${post.title} | MyStore Journal`}
+  description={post.seo_description || post.excerpt || post.title}
+  ogType="article"
+  ogImage={post.cover_image_url}
+  publishDate={post.published_at}
+  modifiedDate={post.updated_at}
+  author="MyStore"
+  tags={post.tags || []}
+  structuredData={[articleLd, breadcrumbLd]}
+>
+  <article class="max-w-3xl mx-auto px-6 lg:px-10 py-16 lg:py-20">
+    <p class="text-xs uppercase tracking-widest text-[var(--color-mute)]">{post.published_at ? new Date(post.published_at).toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' }) : ''}</p>
+    <h1 class="font-display text-4xl sm:text-5xl tracking-tight mt-3">{post.title}</h1>
+    {post.excerpt && <p class="mt-5 text-lg text-[var(--color-mute)] leading-relaxed">{post.excerpt}</p>}
+    {post.cover_image_url && <img src={post.cover_image_url} alt={post.title} class="mt-10 w-full aspect-[16/9] object-cover" />}
+    <div class="mt-10" set:html={renderBody(post.body || '')} />
+    <footer class="mt-16 border-t border-[var(--color-line)] pt-8 flex flex-wrap gap-3 items-center justify-between">
+      <a href="/blog" class="link-underline text-sm">← Back to journal</a>
+      <a href="/shop" class="btn-ghost text-sm !py-2 !px-4">Shop the store</a>
+    </footer>
+  </article>
+</Base>
